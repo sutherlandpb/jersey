@@ -225,7 +225,9 @@ public class MultiPartReaderClientSide implements MessageBodyReader<MultiPart> {
             // see if the User-Agent header corresponds to some version of MS Internet Explorer
             // if so, need to set fileNameFix to true to handle issue http://java.net/jira/browse/JERSEY-759
             final String userAgent = headers.getFirst(HttpHeaders.USER_AGENT);
-            fileNameFix = userAgent != null && userAgent.contains(" MSIE ");
+            // Edge, IE11 and IE10- all beed the workaround,
+            // otherwise fileName in formDataHeader parts will contain full path with \ characters treated like escape characters
+            fileNameFix = userAgent != null && (userAgent.contains(" MSIE ") || userAgent.contains(" Trident/") || userAgent.contains(" Edge/"));
         }
 
         for (final MIMEPart mimePart : getMimeParts(mimeMessage)) {
